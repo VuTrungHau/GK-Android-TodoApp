@@ -84,8 +84,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Todo App</Text>
-      <ScrollView style={ {paddingBottom: 50}}>
+      <Text style={styles.title}>Todo List</Text>
+      <ScrollView style={{maxHeight: '81%'}}>
         <View style={styles.items}>
           <FlatList
             data = {todoItems}
@@ -98,7 +98,7 @@ export default function App() {
       </ScrollView>
       
       <KeyboardAvoidingView style={styles.inputWraper}>
-        <TextInput style={styles.input} placeholder={'Nhập ở đây'} value={todo} onChangeText={text => setTodo(text)} />
+        <TextInput style={styles.input} placeholder={'Nhập ở đây'} value={todo} defaultValue=" " onChangeText={text => setTodo(text)} />
         <TouchableOpacity style={styles.addWraper} onPress={()=>AddTodo(todo)}>
           <Text style={styles.addText}>+</Text>
         </TouchableOpacity>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   input: {
     padding: 10,
