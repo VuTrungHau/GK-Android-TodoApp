@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { KeyboardAvoidingView, TextInput, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { KeyboardAvoidingView, TextInput, TouchableOpacity, ScrollView, FlatList, Alert } from 'react-native';
 import Item from './Item';
 import { initializeApp } from "firebase/app";
 import "firebase/auth";
@@ -11,11 +11,31 @@ import "firebase/storage";
 import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
 import { LogBox } from 'react-native';
 
-LogBox.ignoreLogs(['Setting a timer']);
+LogBox.ignoreAllLogs();
 
 export default function App() {
   const [todo, setTodo] = useState();
   const [todoItems, setTodoItems] = useState([]);
+
+  const showAlert = (item) =>
+    Alert.alert(
+      "",
+      "Compeleted "+item.TodoItem+"?",
+      [
+        {
+          text: "Remove",
+          onPress: () => RemoveTodo(item.id),
+          style: "cancel",
+        },
+        {
+          text: "No",
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
 
   useEffect(()=>{
     const firebaseConfig = {
@@ -73,7 +93,7 @@ export default function App() {
             data = {todoItems}
             keyExtractor={({item}, index)=>{index.toString()}}
             renderItem={({item}, index)=>
-              <TouchableOpacity onPress={()=>{RemoveTodo(item.id)}}><Item text={item.TodoItem} /></TouchableOpacity>
+              <TouchableOpacity onPress={()=>{showAlert(item)}}><Item text={item.TodoItem} /></TouchableOpacity>
             }
           />
       </View>
