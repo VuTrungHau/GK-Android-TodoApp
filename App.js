@@ -86,8 +86,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-    <Text style={styles.title}>Todo App</Text>
-      <ScrollView>
+      <Text style={styles.title}>Todo App</Text>
+      <ScrollView style={ {flexGrow: 0}}>
         <View style={styles.items}>
           <FlatList
             data = {todoItems}
@@ -96,7 +96,7 @@ export default function App() {
               <TouchableOpacity onPress={()=>{showAlert(item)}}><Item text={item.TodoItem} /></TouchableOpacity>
             }
           />
-      </View>
+        </View>
       </ScrollView>
       
       <KeyboardAvoidingView style={styles.inputWraper}>
