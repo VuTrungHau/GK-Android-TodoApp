@@ -85,7 +85,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Todo App</Text>
-      <ScrollView style={ {flexGrow: 0}}>
+      <ScrollView style={ {paddingBottom: 50}}>
         <View style={styles.items}>
           <FlatList
             data = {todoItems}
