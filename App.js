@@ -48,7 +48,6 @@ export default function App() {
     };
     // Initialize Firebase
     initializeApp(firebaseConfig);
-    console.log("Kết nối thành công");
     GetData();
   }, [])
 
@@ -78,7 +77,6 @@ export default function App() {
           id: childSnapshot.key
         })
       });
-      console.log(array);
       setTodoItems(array);
     });
     
@@ -92,7 +90,7 @@ export default function App() {
           <FlatList
             data = {todoItems}
             keyExtractor={({item}, index)=>{index.toString()}}
-            renderItem={({item}, index)=>
+            renderItem={({item})=>
               <TouchableOpacity onPress={()=>{showAlert(item)}}><Item text={item.TodoItem} /></TouchableOpacity>
             }
           />
