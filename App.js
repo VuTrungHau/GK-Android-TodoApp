@@ -16,8 +16,8 @@ LogBox.ignoreAllLogs();
 export default function App() {
   const [todo, setTodo] = useState();
   const [todoItems, setTodoItems] = useState([]);
-
-  const showAlert = (item) =>
+  
+  function showAlert(item){
     Alert.alert(
       "",
       "Compeleted "+item.TodoItem+"?",
@@ -36,6 +36,7 @@ export default function App() {
         cancelable: true,
       }
     );
+  }
 
   useEffect(()=>{
     const firebaseConfig = {
@@ -52,6 +53,9 @@ export default function App() {
   }, [])
 
   function AddTodo(todoItem) {
+    if(todoItem == null){
+      todoItem = "Unname"
+    }
     const db = getDatabase();
     const reference = ref(db, 'todo/');
     push(reference, {
@@ -98,7 +102,7 @@ export default function App() {
       </ScrollView>
       
       <KeyboardAvoidingView style={styles.inputWraper}>
-        <TextInput style={styles.input} placeholder={'Nhập ở đây'} value={todo} defaultValue=" " onChangeText={text => setTodo(text)} />
+        <TextInput style={styles.input} placeholder={'Nhập ở đây'} value={todo} onChangeText={text => setTodo(text)} />
         <TouchableOpacity style={styles.addWraper} onPress={()=>AddTodo(todo)}>
           <Text style={styles.addText}>+</Text>
         </TouchableOpacity>
