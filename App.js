@@ -15,6 +15,8 @@ LogBox.ignoreAllLogs();
 
 export default function App() {
   const [todo, setTodo] = useState();
+  //todoItems là array chứa dữ liệu để đổ ra giao diện
+  //gọi setTodoItems(array) để cập nhật todoItems
   const [todoItems, setTodoItems] = useState([]);
   
   function showAlert(item){
@@ -39,6 +41,7 @@ export default function App() {
   }
 
   useEffect(()=>{
+    //Đây là code kết nối firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAg_zxkt0cATldAGylA1LTM7BYZ3uUsCOA",
       authDomain: "myapp-b3c94.firebaseapp.com",
@@ -49,6 +52,8 @@ export default function App() {
     };
     // Initialize Firebase
     initializeApp(firebaseConfig);
+    //Ở đây m kiểm tra có kết nối mạng hay không, nếu có thì gọi GetData(),
+    //nếu không thì dùng local data để lấy ra dữ liệu rồi dùng setTodoItems() 
     GetData();
   }, [])
 
@@ -84,6 +89,7 @@ export default function App() {
           id: childSnapshot.key
         })
       });
+      //Viết câu lệnh lưu array vào local data ở đây
       setTodoItems(array);
     });
     
