@@ -56,6 +56,9 @@ export default function App() {
     if(todoItem == null){
       todoItem = "Unname"
     }
+    if(todoItem.trim()==""){
+      todoItem = "Unname"
+    }
     const db = getDatabase();
     const reference = ref(db, 'todo/');
     push(reference, {
