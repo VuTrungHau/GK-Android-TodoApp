@@ -67,6 +67,7 @@ export default function App() {
         // error => {console.log(error)}
       );
     });
+    
   }
   
  
@@ -83,7 +84,7 @@ export default function App() {
       );
     });
   }
- 
+ deleteItem('-N12_VGEIkZumTe4Y7nz')
   
   function select(){
     dbLocal.transaction(tx => {
@@ -108,7 +109,7 @@ export default function App() {
     }) 
   }
 
-  // selectShowLog()
+  selectShowLog()
 
 
 
@@ -177,6 +178,7 @@ export default function App() {
     });
   }
   function RemoveTodo(id){
+    console.log(id)
     deleteItem(id)
     if(internetConnection){
       const db = getDatabase();
@@ -207,7 +209,7 @@ export default function App() {
       }
       // console.log(array)
       
-      setTodoItems(array)
+      select()
     });
     
   }
