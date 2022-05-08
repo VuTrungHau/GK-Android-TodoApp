@@ -10,10 +10,109 @@ import "firebase/functions";
 import "firebase/storage";
 import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
 import { LogBox } from 'react-native';
-
+import * as SQLite from 'expo-sqlite'
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import connect, {sql} from '@databases/expo';
 LogBox.ignoreAllLogs();
 
+// const dbLocal = connect('my.db');
+
+
+
+function openDatabase() {
+  if (Platform.OS === "web") {
+    return {
+      transaction: () => {
+        return {
+          executeSql: () => {},
+        };
+      },
+    };
+  }
+
+  const db = SQLite.openDatabase("db.db");
+  return db;
+}
+const dbLocal = openDatabase();
+
+
 export default function App() {
+  
+// Check internet connection
+  const internetConnection = NetInfo.addEventListener(state => state.isConnected);
+
+  const createTable = () =>{
+    dbLocal.transaction((tx) =>{
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS todo (id VARCHAR(255) PRIMARY KEY,TodoItem VARCHAR(255))'),  null, 
+        (txObj, results) => {console.log(results)} ,
+        (txObj, error) => console.log('Error create', error)
+    })
+
+
+  }
+  createTable();
+
+
+  function insert(todoItem = []){
+    dbLocal.transaction( tx => {
+      tx.executeSql('INSERT INTO todo (id, TodoItem) values (?, ?)',[todoItem[0], todoItem[1]],
+        (tx, results) => {
+          console.log('Results', results.rowsAffected);
+          if (results.rowsAffected > 0) {
+            Alert.alert('Data Inserted Successfully....');
+          } else Alert.alert('Failed....');
+        },
+        // error => {console.log(error)}
+      );
+    });
+    
+  }
+  
+ 
+  function deleteItem(id){
+    dbLocal.transaction( tx => {
+      tx.executeSql('delete from todo where id = ?;',[id],
+        (tx, results) => {
+          console.log('Results', results.rowsAffected);
+          // if (results.rowsAffected > 0) {
+          //   Alert.alert('Data Delete Successfully....');
+          // } else Alert.alert('Failed....');
+        },
+        // error => {console.log(error)}
+      );
+    });
+  }
+ deleteItem('-N12_VGEIkZumTe4Y7nz')
+  
+  function select(){
+    dbLocal.transaction(tx => {
+      // sending 4 arguments in executeSql
+      tx.executeSql('SELECT * FROM todo', null,
+        // success callback 
+        (txObj, results) => {setTodoItems(results.rows._array)} ,
+        // failure callback 
+        (txObj, error) => console.log('Error select', error)
+        ) 
+    }) 
+  }
+  function selectShowLog(){
+    dbLocal.transaction(tx => {
+      // sending 4 arguments in executeSql
+      tx.executeSql('SELECT * FROM todo', null,
+        // success callback 
+        (txObj, results) => {console.log(results.rows._array)} ,
+        // failure callback 
+        (txObj, error) => console.log('Error select', error)
+        ) 
+    }) 
+  }
+
+  selectShowLog()
+
+
+
   const [todo, setTodo] = useState();
   //todoItems là array chứa dữ liệu để đổ ra giao diện
   //gọi setTodoItems(array) để cập nhật todoItems
@@ -54,8 +153,16 @@ export default function App() {
     initializeApp(firebaseConfig);
     //Ở đây m kiểm tra có kết nối mạng hay không, nếu có thì gọi GetData(),
     //nếu không thì dùng local data để lấy ra dữ liệu rồi dùng setTodoItems() 
-    GetData();
+    
+    if(internetConnection){
+      GetData();
+    }else{
+      select();
+    }
+
   }, [])
+
+  
 
   function AddTodo(todoItem) {
     if(todoItem == null){
@@ -70,11 +177,15 @@ export default function App() {
       TodoItem: todoItem
     });
   }
-
   function RemoveTodo(id){
-    const db = getDatabase();
-    const reference = ref(db, 'todo/' + id);
-    remove(reference)
+    console.log(id)
+    deleteItem(id)
+    if(internetConnection){
+      const db = getDatabase();
+      const reference = ref(db, 'todo/' + id);
+      remove(reference)
+    }
+    
   }
 
   function GetData(){
@@ -90,7 +201,15 @@ export default function App() {
         })
       });
       //Viết câu lệnh lưu array vào local data ở đây
-      setTodoItems(array);
+      
+      if(array.length > 0 ){
+        array.forEach(element =>{
+          insert([element.id,element.TodoItem])
+        })
+      }
+      // console.log(array)
+      
+      select()
     });
     
   }
@@ -108,7 +227,7 @@ export default function App() {
             }
           />
         </View>
-      </ScrollView>
+      </ScrollView> 
       
       <KeyboardAvoidingView style={styles.inputWraper}>
         <TextInput style={styles.input} placeholder={'Nhập ở đây'} value={todo} onChangeText={text => setTodo(text)} />
