@@ -269,6 +269,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: '80%',
     backgroundColor: '#fff',
+    borderColor: '#7cd5f2',
+    borderWidth: 1,
     borderRadius: 25
   },
   addWraper: {
@@ -277,10 +279,12 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 50
+    borderRadius: 50,
+    borderColor: '#7cd5f2',
+    borderWidth: 1
   },
   addText: {
     fontSize: 30,
-    color: '#c8d9e6'
+    color: '#609af7'
   }
 });
